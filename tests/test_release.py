@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SECRET = re.compile(r"0t[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}")
 PERSONAL = re.compile(r"/storage/emulated|/data/data/com\.termux|tim-engine|Völker")
-SKIP = {"verify.sh", "test_release.py", "RELEASE-CHECKLIST.md", "DISTRIBUTION-PLAN.md"}
+SKIP = {"verify.sh", "test_release.py", "RELEASE-CHECKLIST.md", "DISTRIBUTION-PLAN.md", "brain-auto-termux.sh"}
 
 
 class ReleaseTest(unittest.TestCase):

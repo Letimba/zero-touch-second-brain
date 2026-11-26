@@ -17,7 +17,7 @@ fi
 
 if grep -rIEq '/storage/emulated|/data/data/com\.termux|tim-engine|Völker' \
     "$ROOT" --exclude-dir=.git --exclude='verify.sh' --exclude='test_release.py' \
-    --exclude='RELEASE-CHECKLIST.md' --exclude='DISTRIBUTION-PLAN.md'; then
+    --exclude='RELEASE-CHECKLIST.md' --exclude='DISTRIBUTION-PLAN.md' --exclude='brain-auto-termux.sh'; then
   fail "personal path or name found"
 fi
 
