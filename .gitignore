@@ -1,0 +1,29 @@
+# Runtime state and private data
+automation/logs/
+automation/state/
+automation/queue/
+*.log
+*.tmp
+.env
+.env.*
+*.pem
+*.key
+
+# Python / Node
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+package-lock.json
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Never publish personal vault content
+examples/vault/50_Personen/
+examples/vault/60_Tagebuch/
+examples/vault/00_Rohdaten/*
+!examples/vault/00_Rohdaten/README.md
+private/
