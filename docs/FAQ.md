@@ -15,6 +15,11 @@ The scheduler runs one cycle every 15 minutes; a shell hook catches missed runs.
 Not natively yet. The agent and command files are plain Markdown, so adapters
 are straightforward, but they are not shipped in 0.1.0.
 
+### Why does Termux need a wrapper script?
+The portable scripts use `#!/usr/bin/env bash` for Linux/macOS. Android has no
+`/usr/bin/env`, so the scheduler must start
+`scripts/termux/brain-auto-termux.sh`, which invokes them through `$PREFIX/bin/bash`.
+
 ### What if my vault already exists?
 `install.sh` never overwrites an existing vault. Point `VAULT` at it and review
 the curated agents before the first run.

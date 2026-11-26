@@ -32,8 +32,9 @@ export SECOND_BRAIN_HOME="$HOME/zero-touch-second-brain"
 
 Optional automations:
 
-- Termux scheduler (15 min):
-  `termux-job-scheduler --script "$SECOND_BRAIN_HOME/automation/brain-auto.sh" --job-id 99101 --period-ms 900000 --persisted true`
+- Termux scheduler (15 min) — use the wrapper, because `/usr/bin/env` does not
+  exist on Android:
+  `termux-job-scheduler --script "$SECOND_BRAIN_HOME/scripts/termux/brain-auto-termux.sh" --job-id 99101 --period-ms 900000 --persisted true`
 - Any new shell: add
   `bash "$SECOND_BRAIN_HOME/automation/brain-auto.sh" --bg` to your shell rc with
   a 30-minute throttle.
