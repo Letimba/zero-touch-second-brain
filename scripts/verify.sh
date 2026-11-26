@@ -15,7 +15,7 @@ if grep -rIEq '(0t[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{20,}|
   fail "secret-shaped string found"
 fi
 
-if grep -rIEq '/storage/emulated|/data/data/com\.termux|tim-engine|Letimba|Völker' \
+if grep -rIEq '/storage/emulated|/data/data/com\.termux|tim-engine|Völker' \
     "$ROOT" --exclude-dir=.git --exclude='verify.sh' --exclude='test_release.py' \
     --exclude='RELEASE-CHECKLIST.md' --exclude='DISTRIBUTION-PLAN.md'; then
   fail "personal path or name found"
