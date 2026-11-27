@@ -23,3 +23,9 @@ VAULT="$HOME/SecondBrain" bash scripts/install-adapters.sh cursor "$HOME/my-proj
 Only OpenCode supports the full orchestration (scheduler, session API export,
 command wrappers). Other CLIs get the retrieval/capture rules; automation must
 be started manually or via the scheduler script.
+
+The shared rule text in `adapters/common/LEARNING-LOOP.md` is the single source
+of truth. This is a deliberate subset of the
+[Agent Skills specification](https://agentskills.io/specification): the rules
+are portable, but they are not yet packaged as spec-compliant skills. See
+[Obsidian ecosystem](OBSIDIAN-ECOSYSTEM.md) for why that direction was chosen.

@@ -119,7 +119,7 @@ placeholders.
 [Quick start](QUICKSTART.md) · [Architecture](docs/ARCHITECTURE.md) ·
 [Learning loop](docs/LEARNING-LOOP.md) · [Security](SECURITY.md) ·
 [FAQ](docs/FAQ.md) · [Roadmap](DISTRIBUTION-PLAN.md) ·
-[Changelog](CHANGELOG.md) · [Compatibility](docs/COMPATIBILITY.md) · [Demo](docs/demo/index.html)
+[Changelog](CHANGELOG.md) · [Compatibility](docs/COMPATIBILITY.md) · [Demo](docs/demo/index.html) · [Ecosystem](docs/OBSIDIAN-ECOSYSTEM.md)
 
 ## Contributing
 

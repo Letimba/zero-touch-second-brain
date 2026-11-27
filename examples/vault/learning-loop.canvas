@@ -1,0 +1,16 @@
+{
+  "nodes": [
+    {"id": "capture", "type": "text", "x": 0, "y": 0, "width": 240, "height": 120, "text": "# 1 Capture\nClipboard + finished session"},
+    {"id": "distill", "type": "text", "x": 320, "y": 0, "width": 240, "height": 120, "text": "# 2 Distill\nmax. 5 atomic lessons + protocol"},
+    {"id": "retrieve", "type": "text", "x": 640, "y": 0, "width": 240, "height": 120, "text": "# 3 Retrieve\ntop rules first, lesson on demand"},
+    {"id": "triage", "type": "text", "x": 320, "y": 200, "width": 240, "height": 120, "text": "# 4 Triage\ninbox -> notes + manifest"},
+    {"id": "verify", "type": "text", "x": 640, "y": 200, "width": 240, "height": 120, "text": "# 5 Verify\nlint, health, secret scan"}
+  ],
+  "edges": [
+    {"id": "e1", "fromNode": "capture", "toNode": "distill", "label": "digest"},
+    {"id": "e2", "fromNode": "distill", "toNode": "retrieve", "label": "index"},
+    {"id": "e3", "fromNode": "capture", "toNode": "triage", "label": "draft"},
+    {"id": "e4", "fromNode": "triage", "toNode": "verify", "label": "manifest"},
+    {"id": "e5", "fromNode": "retrieve", "toNode": "verify", "label": "usage"}
+  ]
+}

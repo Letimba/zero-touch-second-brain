@@ -2,6 +2,17 @@
 
 All notable changes are documented here. Format: Keep a Changelog.
 
+## [0.4.0] - 2026-11-27
+
+### Added
+
+- JSON Canvas example (`examples/vault/learning-loop.canvas`) for a spatial view
+  of the automation loop.
+- `docs/OBSIDIAN-ECOSYSTEM.md`: the eight repos from the SATNA Reddit thread,
+  their verified star counts, what we adopted and what we did not.
+- Compatibility note on the Agent Skills specification as the next packaging
+  step for client-independent rules.
+
 ## [0.3.0] - 2026-11-27
 
 ### Added
