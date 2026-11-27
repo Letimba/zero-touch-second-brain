@@ -2,6 +2,14 @@
 
 All notable changes are documented here. Format: Keep a Changelog.
 
+## [0.5.0] - 2026-11-27
+
+### Added
+
+- README rewritten as a conversion-focused, keyword-structured GitHub page.
+- `llms.txt` for AI crawlers and a 1280x640 social preview asset.
+- `docs/BENCHMARK.md` as a citable proof point for agent routing quality.
+
 ## [0.4.0] - 2026-11-27
 
 ### Added

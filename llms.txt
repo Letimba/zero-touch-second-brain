@@ -1,0 +1,36 @@
+# zero-touch-second-brain
+
+> Self-hosted AI second brain for coding agents. Persistent memory in plain Markdown, with an Obsidian-compatible vault.
+
+## Overview
+
+zero-touch-second-brain turns clipboard drops and finished coding-agent sessions
+into atomic lessons, a ten-rule retrieval index and a health report. It runs
+locally on Termux, Linux and macOS. OpenCode drives the full loop; community
+adapters bring the same rules to Claude Code, Codex, Gemini CLI, Cursor and
+Windsurf. The project is MIT licensed and uses plain Markdown files, so the
+vault stays readable without any vendor.
+
+## Key Features
+
+- Capture: clipboard and session drafts with SHA-256 deduplication and redaction.
+- Distillation: at most five atomic lessons and one protocol per session.
+- Retrieval: a short top-rules index that agents read at session start.
+- Triage: inbox files with a manifest and an audit trail.
+- Verification: vault lint, learning gate, health JSON and eight automated tests.
+- Benchmarked agent routing: 100/100 on an eleven-scenario suite.
+
+## Documentation
+
+- [README](https://github.com/Letimba/zero-touch-second-brain/blob/main/README.md)
+- [Quick start](https://github.com/Letimba/zero-touch-second-brain/blob/main/QUICKSTART.md)
+- [Architecture](https://github.com/Letimba/zero-touch-second-brain/blob/main/docs/ARCHITECTURE.md)
+- [Learning loop](https://github.com/Letimba/zero-touch-second-brain/blob/main/docs/LEARNING-LOOP.md)
+- [Compatibility](https://github.com/Letimba/zero-touch-second-brain/blob/main/docs/COMPATIBILITY.md)
+- [Benchmark](https://github.com/Letimba/zero-touch-second-brain/blob/main/docs/BENCHMARK.md)
+- [Security](https://github.com/Letimba/zero-touch-second-brain/blob/main/SECURITY.md)
+- [Obsidian ecosystem](https://github.com/Letimba/zero-touch-second-brain/blob/main/docs/OBSIDIAN-ECOSYSTEM.md)
+
+## Repository
+
+https://github.com/Letimba/zero-touch-second-brain
