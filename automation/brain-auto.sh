@@ -17,7 +17,7 @@ set -uo pipefail
 
 export PATH="${PREFIX:-$HOME/.local}/bin:$HOME/.local/bin:$HOME/bin:$PATH"
 
-VAULT="${VAULT:-$HOME/SecondBrain}"
+VAULT="${VAULT:-/storage/[a-z]+/0/SecondBrain}"
 BASE="$HOME/second-brain/automation"
 STATE="$BASE/state"
 LOGS="$BASE/logs"
@@ -139,7 +139,7 @@ if [ "$SESSION_NOW" -eq 1 ] && [ -n "$EXPORT_OUT" ]; then
   SESSION_QUEUE="$(printf '%s' "$EXPORT_OUT" | jq -r '.exported[0].queue // empty' 2>/dev/null)"
 fi
 
-# 3. One digest -> brain-scribe.
+# 3. Up to SCRIBE_BATCH digests -> brain-scribe in ONE agent invocation.
 redact_stream() {
   sed -E \
     -e 's/(0t[A-Za-z0-9_-]{20,})/[REDACTED]/g' \
@@ -149,18 +149,25 @@ redact_stream() {
     -e 's/(AKIA[0-9A-Z]{16})/[REDACTED]/g'
 }
 
-pick_digest() {
+pick_digests() {
+  local max="${SCRIBE_BATCH:-3}" n=0 f
   if [ -n "$SESSION_QUEUE" ] && [ -f "$SESSION_QUEUE" ]; then
     printf '%s\n' "$SESSION_QUEUE"
-    return 0
+    n=1
   fi
-  find "$QUEUE" -maxdepth 1 -type f -name '*.md' -printf '%T@ %p\n' 2>/dev/null \
-    | sort -n | head -1 | cut -d' ' -f2-
+  while IFS= read -r f; do
+    [ "$n" -ge "$max" ] && break
+    [ -n "$f" ] || continue
+    [ "$f" = "$SESSION_QUEUE" ] && continue
+    printf '%s\n' "$f"
+    n=$((n + 1))
+  done < <(find "$QUEUE" -maxdepth 1 -type f -name '*.md' -printf '%T@ %p\n' 2>/dev/null \
+           | sort -n | cut -d' ' -f2-)
 }
 
-run_scribe() {
-  local digest="$1"
-  [ -n "$digest" ] && [ -f "$digest" ] || { SCRIBE_RC="empty"; return 0; }
+run_scribe_batch() {
+  local -a digests=("$@")
+  [ "${#digests[@]}" -gt 0 ] || { SCRIBE_RC="empty"; return 0; }
 
   local before_index before_lessons before_protocols after_index after_lessons after_protocols
   before_index="$(stat -c %Y "$INDEX" 2>/dev/null || echo 0)"
@@ -168,17 +175,20 @@ run_scribe() {
   before_protocols="$(count_notes "$PROTOCOLS")"
 
   local out="$LOGS/scribe-$(date +%Y%m%d-%H%M%S).log"
-  local prompt
-  prompt="Führe deinen Auftrag als brain-scribe aus.
-Digest: $digest
-Vault: $VAULT
-Lies den Digest vollständig, prüfe bestehende Lektionen und den Lernindex auf Duplikate, lege maximal 5 neue Lektionen und genau ein Protokoll an und aktualisiere _Lernindex.md.
-Keine Geheimnisse, keine Chatverläufe. Melde am Ende deinen Handoff."
+  local list="" d
+  for d in "${digests[@]}"; do
+    list="${list}- ${d}"$'\n'
+  done
+  local prompt="Führe deinen Auftrag als brain-scribe aus.
+Digests (${#digests[@]} Stück):
+${list}Vault: $VAULT
+Verarbeite JEDEN genannten Digest vollständig. Prüfe bestehende Lektionen und den Lernindex auf Duplikate. Lege INSGESAMT maximal 5 neue Lektionen und genau ein Protokoll je Digest an. Aktualisiere _Lernindex.md.
+Keine Geheimnisse, keine Chatverläufe. Melde am Ende einen Handoff mit der Anzahl verarbeiteter Digests."
 
   (
     cd "$VAULT" || exit 1
     timeout "${SCRIBE_TIMEOUT:-900}" opencode run --agent brain-scribe --auto \
-      --title "Brain-Scribe $(basename "$digest" .md)" \
+      --title "Brain-Scribe batch $(date +%H%M%S)" \
       "$prompt"
   ) >"$out" 2>&1
   local rc=$?
@@ -192,15 +202,16 @@ Keine Geheimnisse, keine Chatverläufe. Melde am Ende deinen Handoff."
      || [ "$after_protocols" != "$before_protocols" ]; then
     local done_dir="$QUEUE/done/$(date +%F)"
     mkdir -p "$done_dir"
-    mv -f "$digest" "$done_dir/"
-    SCRIBE_RC="ok"
-    log "scribe ok rc=$rc digest=$(basename "$digest") out=$(basename "$out")"
+    for d in "${digests[@]}"; do
+      [ -f "$d" ] && mv -f "$d" "$done_dir/"
+    done
+    SCRIBE_RC="ok:${#digests[@]}"
+    log "scribe ok rc=$rc digests=${#digests[@]} out=$(basename "$out")"
   else
     SCRIBE_RC="error:$rc"
-    log "scribe failed rc=$rc digest=$(basename "$digest") out=$(basename "$out")"
+    log "scribe failed rc=$rc digests=${#digests[@]} out=$(basename "$out")"
   fi
 
-  # Keep a redacted tail for the shared log; the full log stays local.
   if [ -f "$out" ]; then
     redact_stream <"$out" | tail -20 >>"$LOGS/auto.log"
   fi
@@ -209,12 +220,15 @@ Keine Geheimnisse, keine Chatverläufe. Melde am Ende deinen Handoff."
 if [ "$NO_AGENT" -eq 1 ]; then
   SCRIBE_RC="skipped"
 else
-  DIGEST="$(pick_digest)"
-  if [ -n "$DIGEST" ]; then
-    run_scribe "$DIGEST"
-  else
-    SCRIBE_RC="empty"
-  fi
+  mapfile -t BATCH < <(pick_digests)
+  run_scribe_batch "${BATCH[@]}"
+fi
+
+# 3b. Deterministic verification gate for the learning area.
+VERIFY_RC="skip"
+if [ "$NO_AGENT" -ne 1 ]; then
+  python3 "$BASE/verify_learning.py" >>"$LOGS/auto.log" 2>&1
+  VERIFY_RC=$?
 fi
 
 # 4. Inbox -> brain-curator, at most once per hour (unless forced).
@@ -254,6 +268,7 @@ jq -n \
   --arg scribe "$SCRIBE_RC" \
   --arg inbox "$INBOX_RC" \
   --arg hygiene "$HYGIENE_RC" \
+  --arg verify "$VERIFY_RC" \
   --arg health "$HEALTH_STATUS" \
   --argjson queue "$(queue_count)" \
   --argjson inbox_count "$(inbox_count)" \
@@ -267,7 +282,8 @@ jq -n \
       export: $export,
       scribe: $scribe,
       inbox: $inbox,
-      hygiene: $hygiene
+      hygiene: $hygiene,
+      verify: $verify
     },
     health: $health,
     queue: $queue,

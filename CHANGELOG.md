@@ -2,6 +2,19 @@
 
 All notable changes are documented here. Format: Keep a Changelog.
 
+## [0.3.0] - 2026-11-27
+
+### Added
+
+- Content-level redaction for personal paths, hostnames and names in digests.
+- Deterministic `verify_learning.py` gate for lessons, protocols and index.
+- Four functional tests for redaction, transcript limits and frontmatter.
+
+### Changed
+
+- Digest transcripts bounded to 8,000 chars (before: 90,000) to keep the
+  distillation agent within its timeout.
+
 ## [0.2.0] - 2026-11-27
 
 ### Added

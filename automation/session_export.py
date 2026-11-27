@@ -56,6 +56,17 @@ SECRET_PATTERNS: list[tuple[re.Pattern[str], str]] = [
         "[REDACTED_PRIVATE_KEY]",
     ),
     (re.compile(r"(?i)(https?://)[^/\s:@]+:[^/\s@]+@"), r"\1[REDACTED]@"),
+    (
+        re.compile(
+            r"/(?:data/data/[a-z.]+/files/home|storage/[a-z]+/0|home/ubuntu)/"
+            r"[^\s\"'`|)]*"
+        ),
+        "[PFAD]",
+    ),
+    (
+        re.compile(r"\b(?:Letimba|helix-bot\.duckdns\.org|158\.101\.171\.168)\b"),
+        "[BEZEICHNER]",
+    ),
 ]
 
 STRONG_SECRET = re.compile(
@@ -134,7 +145,7 @@ def message_text(message: dict) -> str:
     return ""
 
 
-def build_transcript(messages: list[dict], max_chars: int = 90000, per_msg: int = 8000) -> str:
+def build_transcript(messages: list[dict], max_chars: int = 8000, per_msg: int = 1800) -> str:
     blocks: list[str] = []
     for message in messages:
         text = message_text(message)
@@ -181,7 +192,7 @@ def build_digest(session: dict, messages: list[dict], transcript: str) -> str:
         "---\n\n"
         f"# Session-Digest: {title}\n\n"
         "> Automatisch exportiert aus OpenCode. Nur User- und Assistant-Text, "
-        "keine Tool-Ausgaben, keine Reasoning-Daten. Geheimnisse wurden redigiert.\n\n"
+        "keine Tool-Ausgaben, keine Reasoning-Daten. Geheimnisse, persönliche Pfade und Namen wurden redigiert.\n\n"
         "## Verlauf\n\n"
         f"{transcript}\n"
     )
