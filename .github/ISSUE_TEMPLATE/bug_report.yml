@@ -1,0 +1,21 @@
+name: Bug report
+description: A reproducible problem with one of the scripts or adapters
+body:
+  - type: input
+    id: version
+    attributes: {label: Version or commit, placeholder: "v0.2.0 / dd6ab5b"}
+    validations: {required: true}
+  - type: dropdown
+    id: cli
+    attributes:
+      label: CLI
+      options: [OpenCode, Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Other]
+    validations: {required: true}
+  - type: textarea
+    id: command
+    attributes: {label: Command, description: "Paste the command you ran, never tokens or vault content"}
+    validations: {required: true}
+  - type: textarea
+    id: actual
+    attributes: {label: Actual vs expected, description: "Short output excerpt with secrets and personal paths removed"}
+    validations: {required: true}

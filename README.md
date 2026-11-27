@@ -82,10 +82,12 @@ flowchart LR
 
 ## Compatibility
 
-Native support targets **OpenCode**. Adapters for Claude Code, Codex and Gemini
-CLI are on the roadmap and are **not shipped yet**. Python 3.10+ uses only the
-standard library. On Linux/macOS, clipboard capture needs an equivalent
-clipboard command; everything else works without Termux.
+Native support targets **OpenCode**. Community adapters for Claude Code,
+Codex, Gemini CLI, Cursor and Windsurf are included since v0.2.0 — see
+[Compatibility](docs/COMPATIBILITY.md). Only OpenCode has the full automated
+loop; other CLIs receive the same retrieval/capture rules as context files.
+Python 3.10+ uses only the standard library. On Linux/macOS, clipboard capture
+needs an equivalent clipboard command; everything else works without Termux.
 
 ## Commands
 
@@ -117,7 +119,7 @@ placeholders.
 [Quick start](QUICKSTART.md) · [Architecture](docs/ARCHITECTURE.md) ·
 [Learning loop](docs/LEARNING-LOOP.md) · [Security](SECURITY.md) ·
 [FAQ](docs/FAQ.md) · [Roadmap](DISTRIBUTION-PLAN.md) ·
-[Changelog](CHANGELOG.md)
+[Changelog](CHANGELOG.md) · [Compatibility](docs/COMPATIBILITY.md) · [Demo](docs/demo/index.html)
 
 ## Contributing
 

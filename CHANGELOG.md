@@ -2,6 +2,20 @@
 
 All notable changes are documented here. Format: Keep a Changelog.
 
+## [0.2.0] - 2026-11-27
+
+### Added
+
+- Community adapters for Claude Code, Codex, Gemini CLI, Cursor and Windsurf
+  with a documented compatibility matrix.
+- Static transcript demo (`docs/demo/index.html`).
+- Code of Conduct, issue templates, PR template and announcement drafts.
+- Repository description, ten topics, homepage and GitHub Discussions.
+
+### Changed
+
+- README no longer claims adapters are unshipped.
+
 ## [0.1.0] - 2026-11-27
 
 ### Added
