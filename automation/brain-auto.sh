@@ -17,7 +17,7 @@ set -uo pipefail
 
 export PATH="${PREFIX:-$HOME/.local}/bin:$HOME/.local/bin:$HOME/bin:$PATH"
 
-VAULT="${VAULT:-/storage/[a-z]+/0/SecondBrain}"
+VAULT="${VAULT:-$HOME/SecondBrain}"
 BASE="$HOME/second-brain/automation"
 STATE="$BASE/state"
 LOGS="$BASE/logs"
@@ -35,6 +35,7 @@ NO_AGENT=0
 CLIP_ONLY=0
 STATUS_ONLY=0
 FORCE_INBOX=0
+NO_EXPORT=0
 
 for arg in "$@"; do
   case "$arg" in
@@ -44,6 +45,7 @@ for arg in "$@"; do
     --no-agent) NO_AGENT=1 ;;
     --clipboard-only) CLIP_ONLY=1 ;;
     --force-inbox) FORCE_INBOX=1 ;;
+    --no-export) NO_EXPORT=1 ;;
     --status) STATUS_ONLY=1 ;;
     -h|--help)
       sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'
@@ -130,8 +132,13 @@ EXPORT_ARGS=(--limit 2 --idle-min 10)
 if [ "$SESSION_NOW" -eq 1 ] || [ "$MODE" = "idle" ]; then
   EXPORT_ARGS=(--latest)
 fi
-EXPORT_OUT="$(python3 "$BASE/session_export.py" "${EXPORT_ARGS[@]}" 2>>"$LOGS/auto.log")"
-EXPORT_RC=$?
+if [ "$NO_EXPORT" -eq 1 ]; then
+  EXPORT_OUT=""
+  EXPORT_RC="skipped"
+else
+  EXPORT_OUT="$(python3 "$BASE/session_export.py" "${EXPORT_ARGS[@]}" 2>>"$LOGS/auto.log")"
+  EXPORT_RC=$?
+fi
 if [ -n "$EXPORT_OUT" ]; then
   printf '%s\n' "$EXPORT_OUT" >>"$LOGS/auto.log"
 fi
@@ -150,7 +157,7 @@ redact_stream() {
 }
 
 pick_digests() {
-  local max="${SCRIBE_BATCH:-3}" n=0 f
+  local max="${SCRIBE_BATCH:-2}" n=0 f
   if [ -n "$SESSION_QUEUE" ] && [ -f "$SESSION_QUEUE" ]; then
     printf '%s\n' "$SESSION_QUEUE"
     n=1
@@ -179,11 +186,10 @@ run_scribe_batch() {
   for d in "${digests[@]}"; do
     list="${list}- ${d}"$'\n'
   done
-  local prompt="Führe deinen Auftrag als brain-scribe aus.
-Digests (${#digests[@]} Stück):
+  local prompt="Führe deinen Auftrag als TRAINIERTER brain-scribe-fast aus.
+Digests (${#digests[@]} Stück, höchstens 2):
 ${list}Vault: $VAULT
-Verarbeite JEDEN genannten Digest vollständig. Prüfe bestehende Lektionen und den Lernindex auf Duplikate. Lege INSGESAMT maximal 5 neue Lektionen und genau ein Protokoll je Digest an. Aktualisiere _Lernindex.md.
-Keine Geheimnisse, keine Chatverläufe. Melde am Ende einen Handoff mit der Anzahl verarbeiteter Digests."
+Für JEDEN Digest: höchstens 1 neue Lektion insgesamt, genau 1 Protokoll je Digest, höchstens 8 Werkzeugaufrufe insgesamt. Kein Vault-weites Globen, kein SCHEMA.md, keine Shell. Ende: OK/<anzahl>/<protokollpfad>."
 
   (
     cd "$VAULT" || exit 1

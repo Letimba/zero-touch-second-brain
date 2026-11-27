@@ -2,6 +2,15 @@
 
 All notable changes are documented here. Format: Keep a Changelog.
 
+## [0.6.0] - 2026-11-27
+
+### Changed
+
+- Trained `brain-scribe`: 8 tool calls, one lesson and one protocol per digest,
+  no vault-wide search. Six real runs drained a queue of eleven digests to zero.
+- `brain-auto.sh` supports `--no-export` for queue-clearing runs.
+- Digest size bound to 8,000 characters with content-level redaction.
+
 ## [0.5.0] - 2026-11-27
 
 ### Added
